@@ -212,7 +212,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "karthi91keyan/mockexamapp:latest"
+        DOCKER_IMAGE = "karthi91keyan/devopsexamapp:latest"
         SCANNER_HOME = tool 'sonar-scanner'
     }
 
