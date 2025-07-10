@@ -4,7 +4,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "karthi91keyan/mockexamapp:latest"
+        DOCKER_IMAGE = "karthi91keyan/devopsexamapp:latest"
     }
 
     stages {
@@ -98,7 +98,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "karthi91keyan/mockexamexamapp:latest"
+        DOCKER_IMAGE = "karthi91keyan/devopsexamexamapp:latest"
     }
 
     stages {
