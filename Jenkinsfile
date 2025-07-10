@@ -4,13 +4,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "kastrov/devopsexamapp:latest"
+        DOCKER_IMAGE = "karthi91keyan/mockexamapp:latest"
     }
 
     stages {
         stage('Git Checkout') {
             steps {
-                git url: 'https://github.com/KastroVKiran/devops-exam-app.git', 
+                git url: 'https://github.com/Karthi-keyan-R/devops-exam-app.git', 
                     branch: 'master'
             }
         }
@@ -98,13 +98,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "kastrov/devopsexamapp:latest"
+        DOCKER_IMAGE = "karthi91keyan/mockexamexamapp:latest"
     }
 
     stages {
         stage('Git Checkout') {
             steps {
-                git url: 'https://github.com/KastroVKiran/devops-exam-app.git', 
+                git url: 'https://github.com/Karthi-keyan-R/devops-exam-app.git', 
                     branch: 'master'
             }
         }
@@ -201,54 +201,4 @@ pipeline {
     }
 }
 
-----------------------------------------------------------K8S-----------------------
-pipeline {
-    agent any
 
-    environment {
-        DOCKER_IMAGE = "kastrov/devopsexamapp:latest"
-        EKS_CLUSTER = "devopsapp"
-        K8S_NAMESPACE = "devopsexamapp"
-        AWS_REGION = "us-west-2"  // Update to your region
-    }
-
-    stages {
-        // Existing stages (Git Checkout, Build, Push) remain the same
-        
-        stage('Deploy to EKS') {
-            steps {
-                script {
-                    withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: 'aws-creds',
-                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                    ]]) {
-                        sh """
-                        # Configure EKS access
-                        aws eks update-kubeconfig --name ${EKS_CLUSTER} --region ${AWS_REGION}
-                        
-                        # Create namespace if not exists
-                        kubectl create namespace ${K8S_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
-                        
-                        # Create image pull secret
-                        kubectl create secret docker-registry dockerhub-creds \\
-                            --docker-server=https://index.docker.io/v1/ \\
-                            --docker-username=kastrov \\
-                            --docker-password=\$(cat /var/jenkins_home/docker-creds/password) \\
-                            --namespace=${K8S_NAMESPACE} \\
-                            --dry-run=client -o yaml | kubectl apply -f -
-                        
-                        # Apply Kubernetes manifests from root
-                        kubectl apply -f deployment.yml
-                        kubectl apply -f service.yml
-                        
-                        # Verify deployment
-                        kubectl rollout status deployment/devopsexamapp -n ${K8S_NAMESPACE}
-                        """
-                    }
-                }
-            }
-        }
-    }
-}
